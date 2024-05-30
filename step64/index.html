@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    @property --x {
+        syntax: '<length>';
+        initial-value: 0px;
+        inherits: false;
+    }
+    @property --y {
+        syntax: '<length>';
+        initial-value: 0px;
+        inherits: false;
+    }
+    @property --r {
+        syntax: '<angle>';
+        initial-value: 0deg;
+        inherits: false;
+    }
+    @keyframes x {
+        to {
+            --x: 2px;
+        }
+    }
+    @keyframes y {
+        to {
+            --y: 0.5px;
+        }
+    }
+    @keyframes r {
+        to {
+            --r: 180deg;
+        }
+    }
+    canvas {
+        position: absolute;
+        width: 100vw;
+        height: 100vh;
+    }
+    .ball {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: red;
+        --x: 0px;
+        --y: 0px;
+        --r: 0deg;
+        top: 30%;
+        left: 50%;
+        transform-origin: 25px 25px;
+        transform: translateX(var(--x)) translateY(var(--y)) rotate(var(--r));
+        animation: x 4s, y 1s, r 2s;
+        animation-iteration-count: infinite;
+        animation-timing-function: cubic-bezier(0.5, -800, 0.5, 800);
+    }
+  </style>
+</head>
+<body>
+  <div class="ball"></div>
+  <canvas></canvas>
+  <script>
+    const canvas = document.querySelector('canvas');
+    const ctx = canvas.getContext('2d');
+    const ball =document.querySelector('.ball');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    function drawPoint() {
+      const rect = ball.getBoundingClientRect();
+      ctx.beginPath();
+      ctx.arc(rect.left + 23, rect.top + 23, 1, 0, 2 * Math.PI);
+      ctx.fillStyle = 'black';
+      ctx.fill();
+    }
+    
+    
+    function drawPath() {
+      drawPoint();
+      requestAnimationFrame(drawPath);
+    }
+    
+    drawPath();
+  </script>
+</body>
+</html>

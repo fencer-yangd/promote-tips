@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>step34</title>
+  <style>
+    .content {
+      width: 400px;
+      height: 200px;
+      background-color: lightblue;
+      margin: 0 auto;
+      border: 3px solid;
+    }
+    .title {
+      height: 80px;
+      background-color: orange;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+      position: relative;
+      margin: 30px -30px;
+    }
+    .title::before,
+    .title::after {
+      content: '';
+      position: absolute;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+      width: 30px;
+      height: 80px;
+      background-color: darkgoldenrod;
+      transform: skewY(45deg);
+      top: 15px;
+      z-index: -1;
+    }
+    .title::after {
+      right: 0;
+      transform: skewY(-45deg);
+    }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <div class="title"></div>
+  </div>
+</body>
+</html>

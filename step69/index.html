@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+      @keyframes ball-frame {
+          0% {
+              top: 0;
+              left: 0;
+          }
+          25% {
+              top: 0;
+              left: 300px;
+          }
+          50% {
+              top: 300px;
+              left: 300px;
+          }
+          75% {
+              top: 300px;
+              left: 0;
+          }
+          100% {
+              top: 0;
+              left: 0;
+          }
+      }
+    .ball {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: red;
+        animation-name: ball-frame;
+        animation-duration: 2s;
+        animation-iteration-count: infinite;
+    }
+  </style>
+</head>
+<body>
+<button id="button">添加元素</button>
+<span id="timer"></span>
+<div class="ball"></div>
+<div class="a"></div>
+<script>
+  const count = 100000;
+  
+  
+  
+  function run() {
+    const now = new Date().getTime();
+    for (let i =0; i< count; i++){
+      const a = document.createElement('div');
+      a.innerHTML = i.toString();
+      document.body.appendChild(a);
+    }
+    const timer = document.querySelector('#timer');
+    timer.innerHTML = (Date.now() - now).toString() + 'ms';
+  }
+
+  let i = 0;
+  let end = 0;
+  let now = 0;
+
+  function runTask() {
+    if (i >= count && !end) {
+      end = Date.now();
+      const timer = document.querySelector('#timer');
+      timer.innerHTML = (Date.now() - now).toString() + 'ms';
+    }
+    if (i >= count) return;
+    requestIdleCallback((idle) => {
+      if (idle.timeRemaining() > 0 && i < count) {
+        runChunk();
+      }
+      runTask();
+    });
+  }
+  
+  function runChunk() {
+    const a = document.createElement('div');
+    a.innerHTML = i.toString();
+    document.body.appendChild(a);
+    i++;
+  }
+  
+  function _run() {
+    now = Date.now();
+    runTask();
+  }
+  
+  
+  const button = document.querySelector('#button');
+  // button.addEventListener('click', run);
+  button.addEventListener('click', _run);
+</script>
+</body>
+</html>

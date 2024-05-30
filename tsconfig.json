@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "target": "esnext",
+    "module": "esnext",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["./step*/*.ts"],
+  "exclude": ["./node_modules/**/*"]
+}

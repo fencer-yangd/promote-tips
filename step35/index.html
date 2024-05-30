@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>step36</title>
+  <style>
+    .container {
+      display: flex;
+    }
+    .item {
+      flex: 1;
+      height: 100px;
+      margin: 0 2em;
+      background-color: red;
+      display: inline-block;
+      text-align: center;
+      line-height: 100px;
+    }
+    /* 需要按内容排序渲染 */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="item" style="order: 3;">3</div>
+    <div class="item" style="order: 2;">2</div>
+    <div class="item" style="order: 1;">1</div>
+  </div>
+</body>
+</html>
