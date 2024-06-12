@@ -8,6 +8,26 @@ function SingleClass(ClassName, ...args) {
   });
 }
 
+// add() 0
+// add(1)() 1
+// add(1)(2) function
+// add(1)(2)(3)() 6
+// add(1)(2)....() 超过 Number.MAX_VALUE throw Error
+function add() {
+  let store = 0;
+  if(!arguments.length) return store;
+  if (arguments[0] - Number.MAX_VALUE > 0) throw new Error('max value');
+  store += arguments[0];
+  return function b() {
+    if(!arguments.length) return store;
+    if (store - Number.MAX_VALUE > 0) throw new Error('max value');
+    store += arguments[0];
+    return b;
+  }
+}
+
+// Promise.allSettled
+
 class A {
   a = 1;
   constructor() {}

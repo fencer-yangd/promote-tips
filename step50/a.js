@@ -2,6 +2,31 @@ const PENDING = 'pending';
 const FULFILLED = 'fulfilled';
 const REJECTED = 'rejected';
 
+
+/**
+ *
+ * add() 0
+ *  add(1) function
+ *  add(1)(2)()  3
+ *  add(1)(2)(3)() Number.Max_Value error
+ *
+ */
+function add() {
+  let store = 0;
+  if(!arguments.length) return 0;
+  if (arguments[0] - Number.MAX_VALUE > 0) throw new SQLException();
+  store += arguments[0];
+  return function () {
+    if (!arguments.length) return store;
+    if (store - Number.MAX_VALUE > 0) throw new SQLException();
+    store += arguments[0];
+    return arguments.callee;
+  }
+}
+
+
+// Promise.allSettled
+
 class MyPromise {
   #status;
   #handler;
