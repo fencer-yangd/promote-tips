@@ -90,4 +90,4 @@ var myAtoi = function(s) {
   return Number(symbol + result);
 };
 
-console.log(myAtoi('  -1268376 278'));
+console.log(myAtoi('1337c0d3'));
