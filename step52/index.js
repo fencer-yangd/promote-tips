@@ -2,102 +2,98 @@
  * 如何消除异步传染？
  */
 
-function sleep(duration) {
-  return new Promise((resolve) => setTimeout(resolve, duration));
+/**
+ *
+ * 将下面的代码消除异步的副作用
+ * async function getUser() {
+ *   const res = await fetch('./1.json').json();
+ *   return res;
+ * }
+ *
+ * async function a() {
+ *   const res = await getUser();
+ *   return res;
+ * }
+ *
+ * async function b() {
+ *   const res = await a();
+ *   return res;
+ * }
+ *
+ * async function main() {
+ *   const res = await b();
+ *   console.log(res);
+ * }
+ *
+ * main();
+ *
+ *
+ */
+
+function getUser() {
+  const res = fetch('./1.json');
+  return res;
 }
 
-const _global = {};
-// 模拟window fetch
-_global.fetch = async (status) => {
-  if (status) {
-    await sleep(1000);
-    return Promise.resolve("success");
-  }
-  await sleep(1000);
-  return Promise.reject("error");
-};
-
-// 以下是主流程代码模块
-{
-  async function a(status) {
-    // other code
-    return await _global.fetch(status);
-  }
-
-  async function b(status) {
-    // other work
-    return await a(status);
-  }
-
-  function main() {
-    const c = b(true);
-    console.log(c);
-  }
-
-  main();
+function a() {
+  const res = getUser();
+  return res;
 }
 
-// 解决方案: 使得主流程代码模块不出现异步，并且能正确拿到结果
+function b() {
+  const res = a();
+  return res;
+}
 
-{
-  function a(status) {
-    // other code
-    return _global.fetch(status);
+function main() {
+  const res = b();
+  console.log(res);
+}
+
+function run(func) {
+  // 1. 缓存 fetch 函数
+  const oldFetch = window.fetch;
+  // 2. 判断是否存在缓存
+  const cache = {
+    status: 'pending', // pending, fulfilled, rejected
+    value: null,
   }
-
-  function b(status) {
-    // other work
-    return a(status);
-  }
-
-  function main() {
-    const c = b(true);
-    console.log(c);
-  }
-
-  const run = (func) => {
-    let cache = [];
-    let i = 0;
-    const _oldFetch = _global.fetch;
-    _global.fetch = (...args) => {
-      if (cache[i]) {
-        if (cache[i].status === "fulfilled") {
-          return cache[i].data;
-        }
-        if (cache[i].status === "rejected") {
-          throw cache[i].err;
-        }
-      }
-      const result = {
-        status: "pending",
-        data: null,
-        err: null,
-      };
-      cache[i++] = result;
-      throw _oldFetch(...args).then(
-        (res) => {
-          result.status = "fulfilled";
-          result.data = res;
-        },
-        (err) => {
-          result.status = "rejected";
-          result.err = err;
-        }
-      );
-    };
-
-    try {
-      func();
-    } catch (err) {
-      if (err instanceof Promise) {
-        const reRun = () => {
-          i = 0;
-          func();
-        };
-        err.then(reRun, reRun);
-      }
+  // 3. 重写 fetch 函数
+  const newFetch = (...args) => {
+    if (cache.status === 'fulfilled') {
+      return cache.value;
     }
-  };
+    if (cache.status === 'rejected') {
+      throw cache.value;
+    }
+    if (cache.status === 'pending') {
+      throw oldFetch(...args).then(res => res.json()).then(res => {
+        cache.value = res;
+        cache.status = 'fulfilled';
+      }, (e) => {
+        cache.value = e;
+        cache.status = 'rejected';
+      })
+    }
+  }
 
-  run(main);
+  // 4. 执行函数
+  try {
+    window.fetch = newFetch;
+    func();
+    window.fetch = oldFetch;
+  } catch (e) {
+    if (e instanceof Promise) {
+      e.then(() => {
+        window.fetch = newFetch;
+        func();
+        window.fetch = oldFetch;
+      });
+    }
+  }
+
+  // 5. 还原 fetch 函数
+  window.fetch = oldFetch;
 }
+
+run(main);
