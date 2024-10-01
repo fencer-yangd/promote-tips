@@ -60,63 +60,63 @@ class LazyMan {
 
 // new LazyMan("Hank").sleep(10).eat("dinner");
 // new LazyMan("Hank").eat("dinner").eat("supper");
-// new LazyMan("Hank").sleepFirst(5).eat("supper");
+new LazyMan("Hank").sleepFirst(5).eat("supper");
 
-const arr = ["a", "b", "c", "d", "e"];
+// const arr = ["a", "b", "c", "d", "e"];
 
 // 回溯算法
-function main(arr) {
-  if (arr.length === 1) return [arr[0]];
-  let res = [];
-  for (let i = 0; i < arr.length; ++i) {
-    const newArray = [...arr.slice(0, i), ...arr.slice(i + 1)];
-    res = res.concat(main(newArray).map((item) => arr[i] + item));
-  }
-  return res;
-}
-// 5! = 120,正解
-console.log(new Set(main(arr)).size);
+// function main(arr) {
+//   if (arr.length === 1) return [arr[0]];
+//   let res = [];
+//   for (let i = 0; i < arr.length; ++i) {
+//     const newArray = [...arr.slice(0, i), ...arr.slice(i + 1)];
+//     res = res.concat(main(newArray).map((item) => arr[i] + item));
+//   }
+//   return res;
+// }
+// // 5! = 120,正解
+// console.log(new Set(main(arr)).size);
 
-function getDeep(tree) {
-  if (!tree) return 0;
-  const queue = [tree];
-  let dep = 0;
-  while (queue.length) {
-    dep++;
-    let size = queue.length;
-    for (let i = 0; i < size; i++) {
-      const node = queue.shift();
-      if (node.children) {
-        for (const child of node.children) {
-          queue.push(child);
-        }
-      }
-    }
-  }
+// function getDeep(tree) {
+//   if (!tree) return 0;
+//   const queue = [tree];
+//   let dep = 0;
+//   while (queue.length) {
+//     dep++;
+//     let size = queue.length;
+//     for (let i = 0; i < size; i++) {
+//       const node = queue.shift();
+//       if (node.children) {
+//         for (const child of node.children) {
+//           queue.push(child);
+//         }
+//       }
+//     }
+//   }
 
-  return dep;
-}
+//   return dep;
+// }
 
-const tree = {
-  name: "root",
-  children: [
-    { name: "叶子1-1" },
-    { name: "叶子1-2" },
-    {
-      name: "叶子2-1",
-      children: [
-        {
-          name: "叶子3-1",
-          children: [
-            {
-              name: "叶子4-1",
-              children: [{}],
-            },
-          ],
-        },
-      ],
-    },
-  ],
-};
+// const tree = {
+//   name: "root",
+//   children: [
+//     { name: "叶子1-1" },
+//     { name: "叶子1-2" },
+//     {
+//       name: "叶子2-1",
+//       children: [
+//         {
+//           name: "叶子3-1",
+//           children: [
+//             {
+//               name: "叶子4-1",
+//               children: [{}],
+//             },
+//           ],
+//         },
+//       ],
+//     },
+//   ],
+// };
 
-console.log(getDeep(tree));
+// console.log(getDeep(tree));

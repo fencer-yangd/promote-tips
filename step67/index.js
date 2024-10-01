@@ -15,20 +15,33 @@ class MemoizeMap {
       this._singleMap.set(obj, value);
     }
   }
+
+  get(obj) {
+    if (this._isObject(obj)) {
+      return this._objectMap.get(obj);
+    }
+    return this._singleMap.get(obj);
+  }
+
+  has(obj) {
+    if (this._isObject(obj)) {
+      return this._objectMap.has(obj);
+    }
+    return this._singleMap.has(obj);
+  }
 }
 
 function memoize(fn, resolver) {
-  const cache = new WeakMap();
+  memoized.cache = new MemoizeMap();
   function memoized(...args) {
     const key = resolver ? resolver(...args) : args[0];
-    if (cache.has(key)) {
-      return cache.get(key);
+    if (memoized.cache.has(key)) {
+      return memoized.cache.get(key);
     }
     const result = fn(...args);
-    cache.set(key, result);
+    memoized.cache.set(key, result);
     return result;
   }
-  memoized.cache = new MemoizeMap();
   return memoized;
 }
 
