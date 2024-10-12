@@ -108,6 +108,14 @@ watch(() => props.path, () => {
   overflow-y: auto;
 }
 
+.show-loading {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .iframe-box {
   box-sizing: border-box;
   width: calc(100% - 80px);

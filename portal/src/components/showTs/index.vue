@@ -113,6 +113,15 @@ watch(() => props.path, () => {
   overflow-x: hidden;
   overflow-y: auto;
 }
+
+.show-loading {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .run-button {
   margin: 10px 0 0 40px;
   width: 200px;
