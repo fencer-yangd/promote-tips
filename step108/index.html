@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Document</title>
+</head>
+<body>
+<script>
+  function listener() {
+    console.log('message1')
+    window.removeEventListener('message', listener)
+  }
+  window.addEventListener('message', listener)
+  requestAnimationFrame(() => {
+    console.log('requestAnimationFrame1')
+  })
+  requestIdleCallback(() => {
+    console.log('requestIdleCallback1')
+  })
+  window.postMessage('message')
+  setTimeout(() => {
+    console.log('setTimeout1')
+  })
+  Promise.resolve().then(() => {
+    console.log('Promise1')
+  })
+  
+  // promise message setTimeout
+  // requestAnimationFrame1 requestIdleCallback1
+  // message setTimeout 同处一个队列，但是 message和 setTimeout 执行依赖于编码顺序
+  // requestAnimationFrame1 requestIdleCallback1执行取决于浏览器的调度，requestAnimationFrame可能会插在宏队列之前，但是requestIdleCallback一定是所有队列的队尾
+</script>
+</body>
+</html>
