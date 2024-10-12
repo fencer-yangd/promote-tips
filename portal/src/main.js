@@ -17,11 +17,12 @@ import Prism from 'prismjs';
 import createLineNumbertPlugin from '@kangc/v-md-editor/lib/plugins/line-number/index';
 import createCopyCodePlugin from '@kangc/v-md-editor/lib/plugins/copy-code/index';
 
-VueMarkdownEditor.use(createLineNumbertPlugin());
-VueMarkdownEditor.use(createCopyCodePlugin());
 
 VueMarkdownEditor.use(vuepressTheme, {
   Prism,
 });
+
+VueMarkdownEditor.use(createLineNumbertPlugin());
+VueMarkdownEditor.use(createCopyCodePlugin());
 
 createApp(App).use(router).use(naiveUI).use(VueMarkdownEditor).mount('#app')

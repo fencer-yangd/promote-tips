@@ -17,7 +17,7 @@ function handleCopyCodeSuccess() {}
 
 watch(() => props.path, () => {
   if (!props.path) return
-  const url = new URL(`${props.path.replace('/public', '')}/index.js`, import.meta.url)
+  const url = new URL(`${props.path.replace('/public', import.meta.env.DEV ? '': '/promote-tips')}/index.js`, import.meta.url)
   axios.get(url.href).then(res => {
     data.value = `\`\`\`js\n${res.data.replace(/\/\/# sourceMappingURL=(.*)$/, '')}\n\`\`\``
     
