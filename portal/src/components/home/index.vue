@@ -7,7 +7,7 @@
 <script setup>
 import { LogoGithub } from '@vicons/ionicons5'
 
-function toGithub() {
+function toGithub(url) {
   // 创建一个 <a> 元素
   const a = document.createElement('a');
   // 设置 <a> 元素的 href 属性为要打开的 URL
