@@ -37,18 +37,3 @@ const step = function () {
 
 step();
 
-function data() {
-  const obj = {
-    a: 1,
-    b: 2,
-  };
-
-  return function (key) {
-    return obj[key];
-  };
-}
-
-const _data = data();
-
-console.log(_data("a"));
-console.log(_data("b"));

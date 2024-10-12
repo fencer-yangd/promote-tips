@@ -48,6 +48,7 @@ function b() {
 function main() {
   const res = b();
   console.log(res);
+  document.querySelector('#result').innerText = JSON.stringify(res, null, 2);
 }
 
 function run(func) {

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="page">
     <div class="menu-container">
       <n-menu
         :value="active"
@@ -10,7 +10,10 @@
       ></n-menu>
     </div>
     <div class="body-container">
-      <show-only-js v-if="chooseMenu.type === 'only-js'" :path="chooseMenu.path" />
+      <show-home v-if="chooseMenu.type === 'default'" />
+      <show-only-js v-else-if="chooseMenu.type === 'only-js'" :path="chooseMenu.path" />
+      <show-only-html v-else-if="chooseMenu.type === 'only-html'" :path="chooseMenu.path" />
+      <show-only-ts v-else-if="chooseMenu.type === 'only-ts'" :path="chooseMenu.path" />
     </div>
   </div>
 </template>
@@ -18,7 +21,7 @@
 import {onBeforeMount, ref, h, computed} from "vue";
 import { NIcon } from 'naive-ui'
 import { BookOutline as BookIcon,  HomeOutline as HomeIcon, } from '@vicons/ionicons5'
-import { ShowOnlyJs } from "@/components"
+import { ShowOnlyJs, ShowOnlyHtml, ShowOnlyTs, ShowHome } from "@/components"
 
 const menus = ref([])
 const active = ref()
@@ -33,7 +36,12 @@ onBeforeMount(() => {
   const promises = Object.keys(modules).map((key) => ({
     promise: modules[key](),
     key,
-  }))
+  })).sort((a, b) => {
+    const reg = /\/step(\d+)\//
+    const [,aIndex] = a.key.match(reg)
+    const [,bIndex] = b.key.match(reg)
+    return +aIndex - +bIndex;
+  })
   Promise.all(promises.map(item => item.promise)).then((res, index) => {
     menus.value = [{
       label: '首页',
@@ -58,7 +66,7 @@ function renderIcon(icon) {
 </script>
 
 <style scoped>
-.container {
+.page {
   width: 100%;
   height: 100%;
   display: flex;
@@ -67,6 +75,8 @@ function renderIcon(icon) {
   height: 100%;
   background-color: #f0f0f0;
   box-shadow: 0 0 8px 1px rgba(0, 0, 0, 0.1);
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 .body-container {
   flex: 1;

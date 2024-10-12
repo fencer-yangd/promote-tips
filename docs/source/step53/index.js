@@ -5,63 +5,84 @@
  *  3：暂停之后可以继续开始任务
  *  4：每个任务不能被中断，如果中断流程的途中，有任务在进行，需要等待当前任务执行结束才执行暂停
  */
-const readline = require('readline');
-const sleep = (duration) => new Promise(resolve => setTimeout(resolve, duration));
+const PENDING = 'pending';
+const FULFILLED = 'fulfilled';
+const REJECTED = 'rejected';
+const DEFAULT = 'default';
 
-const tasks = new Array(10).fill(() => sleep(2000));
+const RUNNING = 'running';
+const STOP = 'stop';
+const FINISH = 'finish';
 
-function processTasks(tasks) {
-  let running = false;
-  let result = [];
-  let i = 0;
-  let promise = null;
-  return {
-    start() {
-      return new Promise(async (resolve, reject) => {
-        if (promise) return promise.then(resolve, reject);
-        if (running) return;
-        console.log('开始执行');
-        running = true;
-        while (i < tasks.length) {
-          try {
-            console.log('开始执行', i + 1);
-            result.push(await tasks[i]());
-            console.log('执行结束', i + 1);
-          } catch (err) {
-            console.log('执行出错', i + 1);
-            reject(err);
-            promise = Promise.reject(err);
-            return;
-          }
-          i++;
-          if(!running && i < tasks.length - 1) return;
+class Schedule {
+  #status;
+  #unHandler;
+  #handler;
+  #result;
+  #finishCallback;
+  #errorCallback;
+  #len;
+
+  constructor(tasks, num, callback, errorCallback) {
+    this.#result = [];
+    this.#status = RUNNING;
+    this.#len = tasks.length;
+    this.#handler = tasks.slice(0, num).map((item, idx) => ({ task: item, idx, status: PENDING }));
+    this.#unHandler = task.slice(num).map((item, idx) => ({ task: item, idx: num + idx, status: DEFAULT }));
+    this.#finishCallback = callback;
+    this.#errorCallback = errorCallback;
+  }
+
+  start() {
+    this.#runHandler();
+  }
+
+  #runHandler() {
+    if (this.#status !== RUNNING) return;
+    while (this.#handler.length) {
+      this.#runOneHandler(this.#handler.shift());
+    }
+  }
+
+  async #runOneHandler(handler) {
+    try {
+      const data = await handler.task();
+      this.#result[handler.idx] = {
+        data,
+        status: FULFILLED,
+      }
+      handler.status = FULFILLED;
+      if (this.#checkFinish()) {
+        this.#status = FINISH;
+        this.#finish();
+      } else {
+        if (this.#unHandler.length) {
+          this.#handler.push(this.#unHandler.shift());
+          this.#runHandler();
         }
-        resolve(result);
-        promise = Promise.resolve(result);
-        if (i >= tasks.length) process.exit();
-      })
+      }
+    } catch(e) {
+      handler.status = REJECTED;
+      this.#status = STOP;
+      this.#errorCallback(e);
+    }
+  }
 
-    },
-    pause() {
-      console.log('执行中断');
-      console.log('按s键重新开始任务');
-      running = false;
-    },
+  #finish() {
+    this.#finishCallback(this.#result.map(item => item.data));
+  }
+
+  #checkFinish() {
+    const unHandlerEmpty = !this.#unHandler.length;
+    const handlerEmpty = !this.#handler.length;
+    const allFinish = new Array(this.#len).fill(0).every((_, idx) => this.#result[idx]?.status === FULFILLED);
+
+    return unHandlerEmpty && handlerEmpty && allFinish;
   }
 }
 
-const _process = processTasks(tasks);
-console.log('按s键开始任务');
+const task = [];
+const scheduler = new Schedule(task, 3);
 
+scheduler.start();
 
-readline.emitKeypressEvents(process.stdin);
-process.stdin.setRawMode(true);
-
-process.stdin.on('keypress', (str, key) => {
-  if (key.name === 'p') {
-    _process.pause();
-  }
-  if (key.name === 's') {
-    _process.start().then(console.log, process.exit);
-  }
-});

@@ -1,68 +1,32 @@
 /**
- * 实现 a[1][2][3] + 4 = 10;
+ 实现以下操作
+ add[1] = 1;
+ add[1][2][3] = 6;
+ add[1][2][3] + 4 = 10
  */
-
-function createAdd() {
-  if (!this.sum) { this.sum = 0 }
-  const self = this;
+function createAdd(sum = { sum: 0 }) {
   const handler = {
     get(target, prop) {
       if (prop === Symbol.toPrimitive) {
-          return () => self.sum;
+        const result = sum.sum;
+        sum.sum = 0;
+        return () => result;
       }
       if (['string', 'number'].includes(typeof prop)) {
-        self.sum += (isNaN(Number(prop)) ? 0 : Number(prop));
-        return new Proxy(createAdd(), handler);
+        sum.sum += (isNaN(Number(prop)) ? 0 : Number(prop));
+        return new Proxy(createAdd(sum), handler);
       }
-      return new Proxy(createAdd(), handler);
+      return new Proxy(createAdd(sum), handler);
     },
     apply(target, thisArg, args) {
-      console.log('apply');
       const result = self.sum;
-      self.sum = 0;
+      sum.sum = 0;
       return result;
     }
   };
-
   return new Proxy(() => {}, handler);
 }
-
 const add = createAdd();
-
-console.log(add[1]); // 输出 1
-console.log(add[1][2][3]); // 输出 6
+console.log(add[1] + 2); // 输出 3
+console.log(add[1][2][3] + 3); // 输出 9
 console.log(add[1][2][3] + 4); // 输出 10
-
-function toProxy(obj, val) {
-  const handler = {
-    get(target, prop) {
-      if (target[prop] === undefined) {
-        return val;
-      }
-      if (typeof target[prop] === 'object') {
-        return toProxy(target[prop], val);
-      }
-
-      return target[prop] || val;
-    },
-    apply(target, thisArg, args) {
-      console.log('apply');
-      // return obj;
-    }
-  }
-  return new Proxy(obj, handler)
-}
-
-const obj1 = {
-  a: {
-    b: {
-      c: {
-        d: 1
-      }
-    }
-  }
-}
-
-const obj2 = toProxy(obj1);
-
-console.log(obj2.a.b.c.d); // 输出 1
