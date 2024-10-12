@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="./glMatrix-0.9.6.js"></script>
+  <script>
+    let webgl;
+    let projMat4 = mat4.create();
+    let canvas;
+    const vertexShader = `
+      attribute vec4 a_position;
+      uniform mat4 proj;
+      void main() {
+        gl_Position = proj * a_position;
+      }
+    `;
+    const fragmentShader = `
+      void main() {
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+      }
+    `;
+
+    function init() {
+      initWebgl();
+      initShader();
+      initBuffer();
+      draw();
+    }
+
+    // 初始化webgl
+    function initWebgl() {
+      canvas = document.getElementById('webglCanvas');
+      webgl = canvas.getContext('webgl');
+      if (!webgl) {
+        console.log('Failed to get the rendering context for WebGL');
+        return;
+      }
+      // 确定webgl画布范围
+      webgl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight);
+      // 设置坐标映射
+      mat4.ortho(0, canvas.clientWidth, canvas.clientHeight, 0, -1, 1, projMat4);
+    }
+
+    // 初始化着色器
+    function initShader() {
+      // 创建顶点着色器容器
+      let vsShader = webgl.createShader(webgl.VERTEX_SHADER);
+      // 创建片元着色器容器
+      let fsShader = webgl.createShader(webgl.FRAGMENT_SHADER);
+      // 将着色器源码写入容器
+      webgl.shaderSource(vsShader, vertexShader);
+      // 将着色器源码写入容器
+      webgl.shaderSource(fsShader, fragmentShader);
+      // 编译顶点着色器
+      webgl.compileShader(vsShader);
+      // 编译片元着色器
+      webgl.compileShader(fsShader);
+      // 创建着色器程序容器
+      let program = webgl.createProgram();
+      // 将顶点着色器挂载到着色器程序容器
+      webgl.attachShader(program, vsShader);
+      // 将片元着色器挂载到着色器程序容器
+      webgl.attachShader(program, fsShader);
+      // 链接着色器程序容器
+      webgl.linkProgram(program);
+      // 使用着色器程序容器
+      webgl.useProgram(program);
+      // 将着色器程序容器挂载到webgl上
+      webgl.program = program;
+    }
+
+    function initBuffer() {
+      let arrIndex = [
+        0, 1, 2,
+        0, 3, 4,
+        1, 2, 3
+      ]
+      let arr = [
+        100.0, 100.0, 0, 1.0,
+        200.0, 200.0, 0, 1.0,
+        300.0, 200.0, 0, 1.0,
+        400.0, 600.0, 0, 1.0,
+        500.0, 700.0, 0, 1.0
+      ]
+      const pointsPosition = new Float32Array(arr);
+      // 创建缓冲区对象
+      let aPosition = webgl.getAttribLocation(webgl.program, 'a_position');
+      const buffer = webgl.createBuffer();
+      webgl.bindBuffer(webgl.ARRAY_BUFFER, buffer);
+      webgl.bufferData(webgl.ARRAY_BUFFER, pointsPosition, webgl.STATIC_DRAW);
+      webgl.enableVertexAttribArray(aPosition);
+      webgl.vertexAttribPointer(aPosition, 4, webgl.FLOAT, false, 4*4, 0);
+
+      let indexPoint = new Uint16Array(arrIndex);
+      let indexBuffer = webgl.createBuffer();
+      webgl.bindBuffer(webgl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+      webgl.bufferData(webgl.ELEMENT_ARRAY_BUFFER, indexPoint, webgl.STATIC_DRAW);
+      // 获取uniform变量的存储位置
+      let uniformProj = webgl.getUniformLocation(webgl.program, 'proj');
+      // 将数据写入缓冲区对象
+      webgl.uniformMatrix4fv(uniformProj, false, projMat4);
+    }
+
+    function draw() {
+      webgl.clearColor(0.0, 0.0, 0.0, 1.0);
+      webgl.clear(webgl.COLOR_BUFFER_BIT);
+      webgl.drawElements(webgl.TRIANGLES, 9, webgl.UNSIGNED_SHORT, 0);
+      // webgl.drawArrays(webgl.LINE_LOOP, 0, 10);
+    }
+  </script>
+</head>
+<body onload="init()">
+<canvas id="webglCanvas" width="1024" height="768"></canvas>
+</body>
+</html>

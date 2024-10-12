@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<script>
+  const evalCode = 'console.log("eval")';
+  eval(evalCode);
+  const setTimeoutCode = 'console.log("setTimeout")'
+  setTimeout(setTimeoutCode);
+  const functionCode = 'console.log("function")'
+  Function(functionCode)();
+  const workerCode = `
+  self.onmessage = function(event) {
+    const message = event.data;
+    console.log('Message received in worker:', message);
+    self.postMessage('Hello from worker');
+  };
+`;
+  const blob = new Blob([workerCode], { type: 'application/javascript' });
+  // 使用 Blob 对象创建 Worker
+  const worker = new Worker(URL.createObjectURL(blob));
+  // 向 Worker 发送消息
+  worker.postMessage('Hello from main thread');
+  // 监听来自 Worker 的消息
+  worker.onmessage = function(event) {
+    // 处理接收到的消息
+    const message = event.data;
+    console.log('Message received in main thread:', message);
+  };
+</script>
+</body>
+</html>

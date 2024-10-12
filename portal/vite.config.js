@@ -13,5 +13,8 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src')
     }
-  }
+  },
+  optimizeDeps: {
+    include: ['@kangc/v-md-editor/lib/theme/vuepress.js'],
+  },
 })

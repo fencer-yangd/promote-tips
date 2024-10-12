@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>step43</title>
+  <style>
+    body {
+      background-color: darkgray;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-top: 200px;
+    }
+
+    div {
+      width: 120px;
+      height: 120px;
+      overflow: hidden;
+    }
+
+    img {
+      display: inline-block;
+      width: 120px;
+      height: 3000px;
+      animation-name: animated;
+      animation-duration: 1000ms;
+      animation-direction: alternate-reverse;
+      animation-iteration-count: infinite;
+      animation-timing-function: steps(24);
+    }
+
+    @keyframes animated {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(-2880px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <img src="./ani-base.png" alt="" />
+  </div>
+</body>
+</html>
