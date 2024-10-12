@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+# 1. 执行编译
+echo "Running build..."
+pnpm run build
+
+# 2. 检查编译是否成功
+if [ $? -ne 0 ]; then
+    echo "Build failed. Aborting commit."
+    exit 1
+fi
+
+# 3. 将编译后的产物添加到 git 暂存区
+echo "Adding build artifacts..."
+git add docs/  # 假设编译后的文件在 dist 目录下，根据实际情况修改
+
+echo "Build completed and artifacts added."
