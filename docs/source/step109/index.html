@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Transition Demo</title>
+  <style>
+      /* 基础样式 */
+      body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+      }
+
+      /* 定义两种视图 */
+      .view {
+          width: 300px;
+          height: 200px;
+          background-color: lightblue;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 24px;
+          color: white;
+          border-radius: 12px;
+          position: absolute;
+          transition: transform 0.5s ease, opacity 0.5s ease;
+      }
+
+      /* 隐藏第二个视图 */
+      .view-2 {
+          background-color: lightcoral;
+          transform: translateX(100%);
+          opacity: 0;
+      }
+
+      /* 显示第二个视图的样式 */
+      .show-view-2 .view-2 {
+          transform: translateX(0);
+          opacity: 1;
+      }
+
+      /* 隐藏第一个视图 */
+      .show-view-2 .view-1 {
+          transform: translateX(-100%);
+          opacity: 0;
+      }
+
+      /* 设置 @view-transition */
+      @view-transition {
+          navigation: auto;
+      }
+  </style>
+</head>
+<body>
+<div class="view view-1">View 1</div>
+<div class="view view-2">View 2</div>
+
+<button id="toggleView" style="position: absolute; bottom: 50px;">Toggle View</button>
+
+<script>
+  const button = document.getElementById('toggleView');
+  const body = document.body;
+
+  // 切换视图的逻辑
+  button.addEventListener('click', () => {
+    body.classList.toggle('show-view-2'); // 切换 class，触发过渡动画
+  });
+</script>
+</body>
+</html>

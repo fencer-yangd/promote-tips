@@ -61,6 +61,10 @@ function runCode() {
 
 watch(() => props.path, () => {
   if (!props.path) return
+  code.value = ''
+  data.value = ''
+  logs.value = []
+  errorLogs.value = []
   console.log = (...args) => {
     logs.value.push(args.map(i => {
       if (typeof i === 'object' && i !== null) {

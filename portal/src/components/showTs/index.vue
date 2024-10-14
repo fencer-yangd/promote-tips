@@ -67,6 +67,11 @@ function handleCopyCodeSuccess(code) {
 
 watch(() => props.path, () => {
   if (!props.path) return
+  tsCode.value = ''
+  tsCodeStr.value = ''
+  jsCode.value = ''
+  jsCodeStr.value = ''
+  logs.value = []
   console.log = (...args) => {
     logs.value.push(args.map(i => {
       if (typeof i === 'object' && i !== null) {

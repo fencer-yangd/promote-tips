@@ -60,6 +60,10 @@ function handleCopyCodeSuccess(code) {
 
 watch(() => props.path, () => {
   if (!props.path) return
+  jsCode.value = ''
+  jsCodeStr.value = ''
+  htmlCode.value = ''
+  htmlCodeStr.value = ''
   loadingBar.start()
   logs.value = []
   loading.value = true
