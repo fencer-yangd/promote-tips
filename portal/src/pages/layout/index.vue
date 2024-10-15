@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="root-view">
     <p-c-view v-if="isPC" />
     <mobile-view v-else />
   </div>
@@ -15,5 +15,9 @@ const isPC = computed(() => IsPC())
 </script>
 
 <style scoped>
-
+.root-view {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
 </style>
