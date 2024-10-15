@@ -15,9 +15,6 @@
           <v-md-editor v-model="htmlCodeStr" mode="preview" :codemirror-config="{ lineNumbers: true }" @copy-code-success="handleCopyCodeSuccess"></v-md-editor>
         </van-collapse-item>
       </van-collapse>
-      <van-button @click="runCode" class="run-button" type="primary">
-        运行
-      </van-button>
       <div class="log-container" title="执行日志" v-if="logs.length">
         <p v-for="(log, index) in logs" :key="index">
           <span>-></span>
@@ -54,13 +51,6 @@ function handleCopyCodeSuccess(code) {
   }).catch(err => {
     showToast( "复制失败: " + err);
   });
-}
-
-
-function runCode() {
-  logs.value = [];
-  // 3. 创建一个新的函数执行 JS 文件的内容（支持异步）
-  eval(code.value);
 }
 
 watch(() => props.path, () => {
