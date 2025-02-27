@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      background-color: aquamarine;
+      box-sizing: border-box;
+      width: 100vw;
+    }
+    .container {
+      box-sizing: border-box;
+      width: 100vw;
+      height: 100%;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .container .item {
+      background-color: #fff;
+      border: 1px dashed #000;
+      width: 100%;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .item.dragging {
+      border: 1px dashed #000;
+      background-color: transparent;
+      color: transparent;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="item" draggable="true" data-area="a">
+      1
+    </div>
+    <div class="item" draggable="true" data-area="b">
+      2
+    </div>
+    <div class="item" draggable="true" data-area="c">
+      3
+    </div>
+    <div class="item" draggable="true" data-area="d">
+      4
+    </div>
+    <div class="item" draggable="true" data-area="e">
+      5
+    </div>
+    <div class="item" draggable="true" data-area="f">
+      6
+    </div>
+    <div class="item" draggable="true" data-area="g">
+      7
+    </div>
+    <div class="item" draggable="true" data-area="h">
+      8
+    </div>
+    <div class="item" draggable="true" data-area="i">
+      9
+    </div>
+    <div class="item" draggable="true" data-area="j">
+      10
+    </div>
+    <div class="item" draggable="true" data-area="k">
+      11
+    </div>
+    <div class="item" draggable="true" data-area="l">
+      12
+    </div>
+    <div class="item" draggable="true" data-area="m">
+      13
+    </div>
+    <div class="item" draggable="true" data-area="n">
+      14
+    </div>
+    <div class="item" draggable="true" data-area="o">
+      15
+    </div>
+    <div class="item" draggable="true" data-area="p">
+      16
+    </div>
+    <div class="item" draggable="true" data-area="q">
+      17
+    </div>
+    <div class="item" draggable="true" data-area="r">
+      18
+    </div>
+    <div class="item" draggable="true" data-area="s">
+      19
+    </div>
+    <div class="item" draggable="true" data-area="t">
+      20
+    </div>
+  </div>
+  <script>
+    const items = document.querySelectorAll('.item');
+    const itemsArray = Array.from(items);
+    let draggedItem = null;
+    const itemsNumArray = []
+    items.forEach((item, index) => {
+      item.style.gridArea = item.getAttribute('data-area');
+      itemsNumArray.push(item.getAttribute('data-area'))
+      item.addEventListener('dragstart', (e) => {
+        setTimeout(() => {
+          item.classList.add('dragging');
+        })
+        draggedItem = item;
+      });
+      item.addEventListener('dragend', (e) => {
+        e.preventDefault();
+        draggedItem = null;
+        item.classList.remove('dragging');
+      });
+      item.addEventListener('dragenter', (e) => {
+        const targetNum = e.target.getAttribute('data-area');
+        if (draggedItem === e.target) return;
+        if (!targetNum) return;
+        const allItems = Array.from(document.querySelectorAll('.item'));
+        const firstRects = allItems.map(item => item.getBoundingClientRect());
+        const dragNum = draggedItem.getAttribute('data-area');
+        const newArray = itemsNumArray.filter(i => i !== dragNum)
+
+        const _newArray = newArray.reduce((acc, cur) => {
+          if (cur === targetNum) {
+            return [...acc, cur, dragNum]
+          }
+          return [...acc, cur]
+        }, [])
+
+        render(_newArray)
+
+        const lastRects = allItems.map(item => item.getBoundingClientRect());
+
+        allItems.forEach((item, index) => {
+          const deltaX = firstRects[index].left - lastRects[index].left;
+          const deltaY = firstRects[index].top - lastRects[index].top;
+
+          if (deltaX !== 0 || deltaY !== 0) {
+            item.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+            item.style.transition = 'transform 0s';
+          }
+        });
+
+        requestAnimationFrame(() => {
+          allItems.forEach((item) => {
+            item.style.transition = 'transform 300ms ease';
+            item.style.transform = 'translate(0, 0)';
+          });
+        });
+      });
+      item.addEventListener('dragover', (e) => {
+        e.preventDefault();
+      });
+    });
+
+    render(itemsNumArray)
+
+    function render(list) {
+      const container = document.querySelector('.container');
+      const gridTemplateAreas = list.reduce((acc, cur, index) => {
+        if ((index + 1) % 3 === 1) {
+          return [...acc, cur]
+        }
+        const [last] = acc.slice(-1);
+        return [...acc.slice(0, -1), `${last} ${cur}`]
+      }, []).map(item => {
+        if (item.split(' ').length  === 1) {
+          return `"${[...item.split(' '), '.', '.'].join(' ')}"`;
+        }
+        if (item.split(' ').length  === 2) {
+          return `"${[...item.split(' '), '.'].join(' ')}"`;
+        }
+        return `"${item}"`;
+      }).join('\n');
+      container.setAttribute('style', `grid-template-areas: ${gridTemplateAreas}`)
+    }
+  </script>
+</body>
+</html>

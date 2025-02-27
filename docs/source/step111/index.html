@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grid Layout</title>
+  <style>
+    body {
+      background-color: aquamarine;
+      box-sizing: border-box;
+      width: 100vw;
+    }
+    .controller {
+      width: 100%;
+    }
+    .container {
+      box-sizing: border-box;
+      width: 100vw;
+      height: 100%;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 10px;
+      grid-template-rows: repeat(7, 100px);
+    }
+
+    .container .item {
+      background-color: #fff;
+      border: 1px dashed #000;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+  
+</head>
+<body>
+  <div class="controller">
+    <span>
+      每排元素：
+      <select id="col">
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+      个
+    </span>
+    <span>
+      元素间隔：
+      <input id="gap" type="number">
+    </span>
+    <span>
+      元素高度：
+      <input id="height" type="number">
+    </span>
+  </div>
+  <div class="container">
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+  </div>
+  <script>
+    const container = document.querySelector('.container')
+      const select = document.querySelector('#col')
+      const input = document.querySelector('#gap')
+      const height = document.querySelector('#height')
+      let columns = 7;
+      select?.addEventListener('change', function () {
+        columns = select.value ? Math.floor(20 / select.value) : 3;
+        container.style.gridTemplateColumns = `repeat(${select.value}, 1fr)`
+      })
+      input?.addEventListener('change', function () {
+        container.style.gridGap = `${input.value}px`
+      })
+      height?.addEventListener('change', function () {
+        container.style.gridTemplateRows = `repeat(${columns}, ${height.value}px)`
+      })
+
+  </script>
+</body>
+</html>
